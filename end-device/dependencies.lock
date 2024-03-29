@@ -1,0 +1,15 @@
+dependencies:
+  idf:
+    component_hash: null
+    source:
+      type: idf
+    version: 5.2.1
+  thread_init:
+    component_hash: null
+    source:
+      path: C:\Users\asend\Projects\4300\threadnet\end-device\components\thread_init
+      type: local
+    version: '*'
+manifest_hash: dc871c726a6751918888428cfc01caabaf546f1e8d3dc7b4404de1cfc25195e4
+target: esp32c6
+version: 1.0.0

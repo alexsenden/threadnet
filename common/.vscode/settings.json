@@ -1,0 +1,33 @@
+{
+  "C_Cpp.intelliSenseEngine": "default",
+  "files.associations": {
+    "esp_openthread_cli.h": "c",
+    "esp_openthread.h": "c",
+    "ip_addr.h": "c",
+    "esp_openthread_types.h": "c",
+    "esp_openthread_netif_glue.h": "c",
+    "esp_openthread_lock.h": "c",
+    "esp_netif_types.h": "c",
+    "esp_event.h": "c",
+    "esp_vfs_eventfd.h": "c",
+    "esp_spiffs.h": "c",
+    "uart.h": "c",
+    "sys.h": "c",
+    "network_state.h": "c",
+    "ip6.h": "c",
+    "array": "c",
+    "*.tcc": "c",
+    "memory": "c",
+    "format": "c",
+    "future": "c",
+    "istream": "c",
+    "functional": "c",
+    "tuple": "c",
+    "utility": "c",
+    "variant": "c",
+    "freertos.h": "c",
+    "esp_wifi.h": "c",
+    "esp_log.h": "c"
+  },
+  "idf.adapterTargetName": "esp32s3"
+}

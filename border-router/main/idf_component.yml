@@ -1,0 +1,10 @@
+## IDF Component Manager Manifest File
+dependencies:
+  idf:
+    version: ">=4.1.0"
+  network_state: 
+    path: ../components/network_state
+  wifi: 
+    path: ../components/wifi
+  thread_init: 
+    path: ../components/thread_init

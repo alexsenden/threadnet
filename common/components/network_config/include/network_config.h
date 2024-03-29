@@ -1,0 +1,10 @@
+#pragma once
+
+#define TRANSPORT_MODE_TCP   1
+#define TRANSPORT_MODE_UDP   2
+#define TRANSPORT_MODE_MULTI 3
+
+#define TRANSPORT_MODE_BROADCAST_PORT 8888
+#define COMMUNICATION_PORT 8899
+
+typedef __UINT8_TYPE__ transport_mode_t;

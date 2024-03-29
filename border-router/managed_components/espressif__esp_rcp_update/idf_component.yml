@@ -1,0 +1,10 @@
+dependencies:
+  idf:
+    version: '>=5.0'
+description: Espressif RCP Update Component for Thread Border Router and Zigbee Gateway
+repository: git://github.com/espressif/esp-thread-br.git
+repository_info:
+  commit_sha: 59bb3d391cd2e0bb87e8144d99334c0c2128ce96
+  path: components/esp_rcp_update
+url: https://github.com/espressif/esp-thread-br/tree/main/components/esp_rcp_update
+version: 1.0.2
