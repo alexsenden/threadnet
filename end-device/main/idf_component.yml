@@ -3,5 +3,9 @@ dependencies:
   ## Required IDF version
   idf:
     version: ">=4.1.0"
+  led:
+    path: ../components/led
   thread_init: 
     path: ../components/thread_init
+  network_state: 
+    path: ../components/network_state

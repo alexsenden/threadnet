@@ -6,6 +6,8 @@
 #include "esp_netif_types.h"
 #include "esp_event.h"
 
+#include "led.h"
+#include "network_state.h"
 #include "thread_init.h"
 
 void app_main(void)
@@ -19,5 +21,7 @@ void app_main(void)
     ESP_ERROR_CHECK(esp_netif_init());
     ESP_ERROR_CHECK(esp_event_loop_create_default());
 
+    init_led();
     start_thread_network();
+    init_net_state_message_handler();
 }

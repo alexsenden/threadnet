@@ -19,6 +19,8 @@
         "task.h": "c",
         "esp_ot_config.h": "c",
         "cli.h": "c",
-        "esp_netif_types.h": "c"
+        "esp_netif_types.h": "c",
+        "network_config.h": "c",
+        "esp_openthread_lock.h": "c"
     }
 }
