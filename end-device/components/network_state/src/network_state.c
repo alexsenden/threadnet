@@ -7,14 +7,14 @@
 #include "network_config.h"
 #include "led.h"
 
-#define ADDR_STRING_SIZE 128
+#define ADDR_STRING_SIZE 64
 
-static transport_mode_t transport_mode;
-static char* network_host_ip;
+#define TAG "Net State"
+
+static transport_mode_t transport_mode = TRANSPORT_MODE_UDP;
+static char* network_host_ip = "";
 
 static otUdpReceiver *net_state_receiver;
-
-static const char* TAG = "Net State";
 
 transport_mode_t get_transport_mode(void)
 {
@@ -41,16 +41,16 @@ static void set_transport_mode_led(int transport_mode)
 {
     switch(transport_mode) {
         case TRANSPORT_MODE_UDP:
-            set_led_color(255, 0, 0);
+            set_led_color(32, 0, 0);
             break;
         case TRANSPORT_MODE_TCP:
-            set_led_color(0, 255, 0);
+            set_led_color(0, 32, 0);
             break;
         case TRANSPORT_MODE_MULTI:
-            set_led_color(0, 0, 255);
+            set_led_color(0, 0, 32);
             break;
         default:
-            set_led_color(255, 255, 255);
+            set_led_color(32, 32, 32);
             break;
     }
 }
@@ -66,6 +66,8 @@ static bool net_state_message_handler(void *aContext, const otMessage *aMessage,
     char message[1024];
     int length = otMessageRead(aMessage, otMessageGetOffset(aMessage), message, sizeof(message) - 1);
     message[length] = '\0';
+
+    ESP_LOGI(TAG, "%s", message);
 
     transport_mode = message[15] - '0';
     set_transport_mode_led(transport_mode);

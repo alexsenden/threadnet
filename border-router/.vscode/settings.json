@@ -28,7 +28,11 @@
     "freertos.h": "c",
     "esp_wifi.h": "c",
     "esp_log.h": "c",
-    "network_config.h": "c"
+    "network_config.h": "c",
+    "message.h": "c",
+    "stdatomic.h": "c",
+    "string.h": "c",
+    "task.h": "c"
   },
   "idf.adapterTargetName": "esp32s3"
 }

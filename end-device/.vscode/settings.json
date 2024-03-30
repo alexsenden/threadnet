@@ -21,6 +21,12 @@
         "cli.h": "c",
         "esp_netif_types.h": "c",
         "network_config.h": "c",
-        "esp_openthread_lock.h": "c"
+        "esp_openthread_lock.h": "c",
+        "ip6.h": "c",
+        "network_state.h": "c",
+        "test_start_receiver.h": "c",
+        "esp_openthread.h": "c",
+        "esp_log.h": "c",
+        "udp.h": "c"
     }
 }

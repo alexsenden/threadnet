@@ -28,12 +28,18 @@ dependencies:
       path: C:\Users\asend\Projects\4300\threadnet\end-device\components\network_state
       type: local
     version: '*'
+  test_runner:
+    component_hash: null
+    source:
+      path: C:\Users\asend\Projects\4300\threadnet\end-device\components\test_runner
+      type: local
+    version: '*'
   thread_init:
     component_hash: null
     source:
       path: C:\Users\asend\Projects\4300\threadnet\end-device\components\thread_init
       type: local
     version: '*'
-manifest_hash: 936b87f13fdeae1e437c3b49a7c6e5504e6e05a2d7efba16a0009d1c86bbcb24
+manifest_hash: 94381b229478c3778c31faee18743a0b99290ccf45d1ec427afa1816acd6834c
 target: esp32c6
 version: 1.0.0

@@ -8,6 +8,7 @@
 
 #include "led.h"
 #include "network_state.h"
+#include "test_start_receiver.h"
 #include "thread_init.h"
 
 void app_main(void)
@@ -24,4 +25,5 @@ void app_main(void)
     init_led();
     start_thread_network();
     init_net_state_message_handler();
+    init_test_start_listener();
 }

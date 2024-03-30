@@ -11,12 +11,16 @@
 #include "network_state.h"
 #include "network_config.h"
 
-#define BROADCAST_PERIOD 60 * 1000 / portTICK_PERIOD_MS // 30 Seconds
-#define BUFFER_SIZE 128
+#define BROADCAST_PERIOD 10 * 1000 / portTICK_PERIOD_MS
+#define BUFFER_SIZE 256
 
 static const char *TAG = "Network State";
 
-static int transport_mode = TRANSPORT_MODE_TCP;
+static transport_mode_t transport_mode = TRANSPORT_MODE_UDP;
+
+transport_mode_t get_transport_mode() {
+    return transport_mode;
+}
 
 void set_transport_mode(transport_mode_t mode) 
 {
@@ -45,6 +49,7 @@ static void set_broadcast_message_info(otMessageInfo *message_info) {
 static void net_state_broadcast_task(void* aContext)
 {   
     char buf[BUFFER_SIZE];
+    char mesh_local_eid[OT_IP6_ADDRESS_STRING_SIZE];
 
     otMessageInfo message_info;
     set_broadcast_message_info(&message_info);
@@ -53,7 +58,8 @@ static void net_state_broadcast_task(void* aContext)
     while(1) {
         vTaskDelay(BROADCAST_PERIOD);
 
-        sprintf(buf, "transport_mode %d", transport_mode);
+        otIp6AddressToString(otThreadGetMeshLocalEid(aInstance), mesh_local_eid, OT_IP6_ADDRESS_STRING_SIZE);
+        sprintf(buf, "transport_mode %d mesh_local_eid %s", transport_mode, mesh_local_eid);
 
         ESP_LOGI(TAG, "Message: >%s<", buf);
 
@@ -64,7 +70,7 @@ static void net_state_broadcast_task(void* aContext)
         otMessageAppend(net_state_message, buf, strlen(buf));
         if(otUdpSendDatagram(aInstance, net_state_message, &message_info) != OT_ERROR_NONE) {
             ESP_LOGW(TAG, "Failed to send network state broadcast");
-            }
+        }
 
         // Release OT Lock
         esp_openthread_lock_release();

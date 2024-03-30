@@ -6,6 +6,7 @@
 #include "esp_netif_types.h"
 #include "esp_event.h"
 
+#include "test_runner.h"
 #include "network_state.h"
 #include "thread_init.h"
 #include "wifi.h"
@@ -23,5 +24,7 @@ void app_main(void)
 
     wifi_init_softap();
     start_thread_network();
+    init_test_listeners();
     start_net_state_broadcasts();
+    start_test_loop();
 }
