@@ -25,8 +25,34 @@
 #include "openthread/instance.h"
 #include "openthread/logging.h"
 #include "openthread/tasklet.h"
+#include "openthread/udp.h"
+#include "openthread/message.h"
 
 #define TAG "thread_worker"
+
+#define UDP_PORT 1212
+
+static void initUdp(otInstance *aInstance);
+void handleUdpReceive(void *aContext, otMessage *aMessage,
+                      const otMessageInfo *aMessageInfo);
+
+static otUdpSocket sUdpSocket;
+
+/**
+ * Initialize UDP socket
+ */
+void initUdp(otInstance *aInstance)
+{
+    otSockAddr listenSockAddr;
+
+    memset(&sUdpSocket, 0, sizeof(sUdpSocket));
+    memset(&listenSockAddr, 0, sizeof(listenSockAddr));
+
+    listenSockAddr.mPort = UDP_PORT;
+
+    otUdpOpen(aInstance, &sUdpSocket, handleUdpReceive, aInstance);
+    otUdpBind(aInstance, &sUdpSocket, &listenSockAddr, OT_NETIF_THREAD);
+}
 
 static esp_err_t init_spiffs(void)
 {
@@ -54,19 +80,23 @@ static void ot_task_worker(void *aContext)
         .host_config = ESP_OPENTHREAD_DEFAULT_HOST_CONFIG(),
         .port_config = ESP_OPENTHREAD_DEFAULT_PORT_CONFIG(),
     };
-    
 
     // Initialize the OpenThread stack
     ESP_ERROR_CHECK(esp_openthread_init(&config));
 
-    esp_netif_t *openthread_netif;
+    esp_openthread_lock_acquire(portMAX_DELAY);
+
     // Initialize the esp_netif bindings
+    esp_netif_t *openthread_netif;
     openthread_netif = init_openthread_netif(&config);
     esp_netif_set_default_netif(openthread_netif);
 
-    esp_openthread_lock_init();
+    otInstance *instance = esp_openthread_get_instance();
+    initUdp(instance);
 
     ESP_ERROR_CHECK(esp_openthread_auto_start(NULL));
+
+    esp_openthread_lock_release();
     esp_openthread_launch_mainloop();
 
     // Clean up
@@ -77,11 +107,20 @@ static void ot_task_worker(void *aContext)
     vTaskDelete(NULL);
 }
 
-void start_thread_network(void) {
+void start_thread_network(void)
+{
     ESP_ERROR_CHECK(init_spiffs());
 
     esp_rcp_update_config_t rcp_update_config = ESP_OPENTHREAD_RCP_UPDATE_CONFIG();
     ESP_ERROR_CHECK(esp_rcp_update_init(&rcp_update_config));
 
     xTaskCreate(ot_task_worker, "ot_main_worker", 10240, xTaskGetCurrentTaskHandle(), 5, NULL);
+}
+
+void handleUdpReceive(void *aContext, otMessage *aMessage,
+                      const otMessageInfo *aMessageInfo)
+{
+    char peerAddr[OT_IP6_ADDRESS_STRING_SIZE];
+    otIp6AddressToString(&aMessageInfo->mPeerAddr, peerAddr, OT_IP6_ADDRESS_STRING_SIZE);
+    ESP_LOGI(TAG, "Received UDP message from %s", peerAddr);
 }

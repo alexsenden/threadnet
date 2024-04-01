@@ -19,33 +19,39 @@ dependencies:
   network_config:
     component_hash: null
     source:
-      path: C:\Users\asend\Projects\4300\threadnet\common\components\network_config
+      path: /Users/landon/Developer/ESP32/threadnet/common/components/network_config
       type: local
     version: '*'
   network_state:
     component_hash: null
     source:
-      path: C:\Users\asend\Projects\4300\threadnet\border-router\components\network_state
+      path: /Users/landon/Developer/ESP32/threadnet/border-router/components/network_state
       type: local
     version: '*'
   test_runner:
     component_hash: null
     source:
-      path: C:\Users\asend\Projects\4300\threadnet\border-router\components\test_runner
+      path: /Users/landon/Developer/ESP32/threadnet/border-router/components/test_runner
       type: local
     version: '*'
   thread_init:
     component_hash: null
     source:
-      path: C:\Users\asend\Projects\4300\threadnet\border-router\components\thread_init
+      path: /Users/landon/Developer/ESP32/threadnet/border-router/components/thread_init
+      type: local
+    version: '*'
+  threadnet_app:
+    component_hash: null
+    source:
+      path: /Users/landon/Developer/ESP32/threadnet/border-router/components/threadnet_app
       type: local
     version: '*'
   wifi:
     component_hash: null
     source:
-      path: C:\Users\asend\Projects\4300\threadnet\border-router\components\wifi
+      path: /Users/landon/Developer/ESP32/threadnet/border-router/components/wifi
       type: local
     version: '*'
-manifest_hash: 5f13977d0dcf29c76469a57e54959990e475c83aa71b57ca01de3959a00b9cc4
+manifest_hash: c517d6b6aa12b2f7db4476c9d7d7194539029b9859252f9a2eb7f6f99590eff1
 target: esp32s3
 version: 1.0.0

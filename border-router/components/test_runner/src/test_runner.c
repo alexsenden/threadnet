@@ -19,7 +19,8 @@
 
 #define TAG "Test Runner"
 
-typedef struct NODE_RESULTS {
+typedef struct NODE_RESULTS
+{
     char node_ipv6[ADDR_STRING_SIZE];
     atomic_int message_count;
 } node_results_t;
@@ -29,6 +30,7 @@ static node_results_t test_results[MAX_DEVICES];
 
 void handle_message(otMessage *aMessage, otMessageInfo *aMessageInfo)
 {
+    ESP_LOGI(TAG, "UDP message received");
     // Read the contents of the message - we will want to do this when we are actually
     // extracting network topology data from the nodes
 
@@ -40,19 +42,23 @@ void handle_message(otMessage *aMessage, otMessageInfo *aMessageInfo)
     otIp6AddressToString(&aMessageInfo->mPeerAddr, src_addr_string, ADDR_STRING_SIZE);
 
     bool node_found_in_results = false;
-    for(int i = 0; i < num_devices && !node_found_in_results; i++) {
-        if(!strcmp(test_results[i].node_ipv6, src_addr_string)){
+    for (int i = 0; i < num_devices && !node_found_in_results; i++)
+    {
+        if (!strcmp(test_results[i].node_ipv6, src_addr_string))
+        {
             test_results[i].message_count++;
         }
     }
 
-    if(!node_found_in_results && num_devices < MAX_DEVICES){
+    if (!node_found_in_results && num_devices < MAX_DEVICES)
+    {
         test_results[num_devices].message_count = 1;
         strcpy(test_results[num_devices].node_ipv6, src_addr_string);
     }
 }
 
-static void set_broadcast_message_info(otMessageInfo *message_info) {
+static void set_broadcast_message_info(otMessageInfo *message_info)
+{
     memset(message_info, 0, sizeof(otMessageInfo));
 
     message_info->mHopLimit = 0xFF;
@@ -63,7 +69,7 @@ static void set_broadcast_message_info(otMessageInfo *message_info) {
 }
 
 static void broadcast_test_start(void)
-{   
+{
     char buf[BUFFER_SIZE];
     sprintf(buf, "STARTING TEST");
 
@@ -75,11 +81,13 @@ static void broadcast_test_start(void)
     // Acquire OT Lock
     esp_openthread_lock_acquire(portMAX_DELAY);
 
-    for(int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++)
+    {
         otMessage *test_start_message = otUdpNewMessage(aInstance, NULL);
         otMessageAppend(test_start_message, buf, strlen(buf));
-    
-        if(otUdpSendDatagram(aInstance, test_start_message, &message_info) != OT_ERROR_NONE) {
+
+        if (otUdpSendDatagram(aInstance, test_start_message, &message_info) != OT_ERROR_NONE)
+        {
             ESP_LOGW(TAG, "Failed to send test start broadcast");
         }
     }
@@ -93,11 +101,12 @@ static void test_end_worker(void *aContext)
     vTaskDelay((TEST_DURATION_SECONDS + TEST_DURATION_BUFFER_SECONDS) * 1000 / portTICK_PERIOD_MS);
 
     ESP_LOGI(TAG, "Test Results: ------------------------------------");
-    for(int i = 0; i < num_devices; i++){
-        ESP_LOGI("Test Results", "Host: %s. Messages: %d. Success Rate: %.3f", 
-            test_results[i].node_ipv6, 
-            test_results[i].message_count, 
-            test_results[i].message_count / (float)TEST_NUM_MESSAGES);
+    for (int i = 0; i < num_devices; i++)
+    {
+        ESP_LOGI("Test Results", "Host: %s. Messages: %d. Success Rate: %.3f",
+                 test_results[i].node_ipv6,
+                 test_results[i].message_count,
+                 test_results[i].message_count / (float)TEST_NUM_MESSAGES);
     }
     ESP_LOGI(TAG, "End Test Results: --------------------------------");
 
@@ -122,7 +131,8 @@ void init_test_listeners(void)
 // TODO: remove this in favour of manual test starts
 static void test_loop(void *aContext)
 {
-    while(1){
+    while (1)
+    {
         vTaskDelay(2 * (TEST_DURATION_SECONDS + TEST_DURATION_BUFFER_SECONDS) * 1000 / portTICK_PERIOD_MS);
         start_test();
     }

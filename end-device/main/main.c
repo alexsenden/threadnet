@@ -24,6 +24,7 @@ void app_main(void)
 
     init_led();
     start_thread_network();
-    init_net_state_message_handler();
-    init_test_start_listener();
+
+    // init_net_state_message_handler();
+    // init_test_start_listener();
 }

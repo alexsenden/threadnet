@@ -2,11 +2,13 @@
 dependencies:
   idf:
     version: ">=4.1.0"
-  network_state: 
+  network_state:
     path: ../components/network_state
-  test_runner: 
+  test_runner:
     path: ../components/test_runner
-  thread_init: 
+  thread_init:
     path: ../components/thread_init
-  wifi: 
+  wifi:
     path: ../components/wifi
+  threadnet_app:
+    path: ../components/threadnet_app

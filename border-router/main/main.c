@@ -11,6 +11,10 @@
 #include "thread_init.h"
 #include "wifi.h"
 
+#include "threadnet_app.h"
+
+#include "esp_log.h"
+
 void app_main(void)
 {
     esp_vfs_eventfd_config_t eventfd_config = {
@@ -24,7 +28,9 @@ void app_main(void)
 
     wifi_init_softap();
     start_thread_network();
-    init_test_listeners();
-    start_net_state_broadcasts();
-    start_test_loop();
+    start_threadnet_app();
+
+    // init_test_listeners();
+    // start_net_state_broadcasts();
+    // start_test_loop();
 }

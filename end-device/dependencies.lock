@@ -13,33 +13,33 @@ dependencies:
   led:
     component_hash: null
     source:
-      path: C:\Users\asend\Projects\4300\threadnet\end-device\components\led
+      path: /Users/landon/Developer/ESP32/threadnet/end-device/components/led
       type: local
     version: '*'
   network_config:
     component_hash: null
     source:
-      path: C:\Users\asend\Projects\4300\threadnet\common\components\network_config
+      path: /Users/landon/Developer/ESP32/threadnet/common/components/network_config
       type: local
     version: '*'
   network_state:
     component_hash: null
     source:
-      path: C:\Users\asend\Projects\4300\threadnet\end-device\components\network_state
+      path: /Users/landon/Developer/ESP32/threadnet/end-device/components/network_state
       type: local
     version: '*'
   test_runner:
     component_hash: null
     source:
-      path: C:\Users\asend\Projects\4300\threadnet\end-device\components\test_runner
+      path: /Users/landon/Developer/ESP32/threadnet/end-device/components/test_runner
       type: local
     version: '*'
   thread_init:
     component_hash: null
     source:
-      path: C:\Users\asend\Projects\4300\threadnet\end-device\components\thread_init
+      path: /Users/landon/Developer/ESP32/threadnet/end-device/components/thread_init
       type: local
     version: '*'
-manifest_hash: 94381b229478c3778c31faee18743a0b99290ccf45d1ec427afa1816acd6834c
+manifest_hash: 930a31578b08481b72176ce05232e5152f538024e2747666c270b81eec070366
 target: esp32c6
 version: 1.0.0

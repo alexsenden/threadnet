@@ -15,7 +15,8 @@ static otUdpReceiver *udp_test_receiver;
 static bool udp_test_message_handler(void *aContext, const otMessage *aMessage, const otMessageInfo *aMessageInfo)
 {
     ESP_LOGI(TAG, "UDP message received");
-    if(aMessageInfo->mSockPort != UDP_TEST_PORT || get_transport_mode() != TRANSPORT_MODE_UDP) {
+    if (aMessageInfo->mSockPort != UDP_TEST_PORT || get_transport_mode() != TRANSPORT_MODE_UDP)
+    {
         ESP_LOGI(TAG, "UDP message discarded. Reasons: port(%d), mode(%d).", aMessageInfo->mSockPort != UDP_TEST_PORT, get_transport_mode() != TRANSPORT_MODE_UDP);
         return false;
     }
@@ -36,7 +37,8 @@ void init_udp_test_listener(void)
     esp_openthread_lock_acquire(portMAX_DELAY);
 
     ESP_LOGI(TAG, "Assigning UDP test message handler");
-    if(otUdpAddReceiver(aInstance, udp_test_receiver) != OT_ERROR_NONE){
+    if (otUdpAddReceiver(aInstance, udp_test_receiver) != OT_ERROR_NONE)
+    {
         ESP_LOGW(TAG, "Could not add UDP test receiver");
     }
 
