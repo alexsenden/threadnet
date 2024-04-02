@@ -12,6 +12,7 @@
 #include "wifi.h"
 
 #include "threadnet_app.h"
+#include "thread_init.h"
 
 #include "esp_log.h"
 
@@ -25,6 +26,8 @@ void app_main(void)
     ESP_ERROR_CHECK(nvs_flash_init());
     ESP_ERROR_CHECK(esp_netif_init());
     ESP_ERROR_CHECK(esp_event_loop_create_default());
+
+    register_update_cb(&update_tracked_node);
 
     wifi_init_softap();
     start_thread_network();

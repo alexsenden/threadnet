@@ -30,8 +30,7 @@ void handleNetifStateChanged(uint32_t aFlags, void *aContext);
 #define UDP_PORT 1212
 
 static const char UDP_DEST_ADDR[] = "ff03::1";
-static const char UDP_PAYLOAD[] = "Hello OpenThread World!";
-static void sendUdp(otInstance *aInstance);
+static void sendUdp(otInstance *aInstance, void *buffer, uint32_t size);
 static otUdpSocket sUdpSocket;
 
 /**
@@ -52,7 +51,7 @@ void initUdp(otInstance *aInstance)
 /**
  * Send a UDP datagram
  */
-void sendUdp(otInstance *aInstance)
+void sendUdp(otInstance *aInstance, void *buffer, uint32_t size)
 {
     otError error = OT_ERROR_NONE;
     otMessage *message;
@@ -68,7 +67,7 @@ void sendUdp(otInstance *aInstance)
     message = otUdpNewMessage(aInstance, NULL);
     otEXPECT_ACTION(message != NULL, error = OT_ERROR_NO_BUFS);
 
-    error = otMessageAppend(message, UDP_PAYLOAD, sizeof(UDP_PAYLOAD));
+    error = otMessageAppend(message, buffer, size);
     otEXPECT(error == OT_ERROR_NONE);
 
     ESP_LOGI(TAG, "Sending UDP message to %s port %d", UDP_DEST_ADDR, UDP_PORT);
@@ -130,9 +129,6 @@ void broadcastNetworkStatus()
     {
         vTaskDelay(10000 / portTICK_PERIOD_MS);
         reportNetworkStatus();
-
-        otInstance *instance = esp_openthread_get_instance();
-        sendUdp(instance);
     }
 }
 
@@ -150,112 +146,68 @@ void handleNetifStateChanged(uint32_t aFlags, void *aContext)
     // reportNetworkStatus();
 }
 
+typedef struct threadnet_packet
+{
+    otDeviceRole role;
+    char ot_mesh_local_eid[OT_IP6_ADDRESS_STRING_SIZE];
+    char ot_link_local_ipv6[OT_IP6_ADDRESS_STRING_SIZE];
+    uint8_t ot_leader_id;
+    uint8_t ot_leader_weight;
+    uint32_t ot_partition_id;
+    uint16_t ot_rloc_16;
+    int8_t parent_avg_rssi;
+    int8_t parent_last_rssi;
+    uint64_t last_time;
+    uint8_t parent_next_hop;
+    uint8_t parent_link_quality_in;
+    uint8_t parent_link_quality_out;
+    uint16_t parent_rloc16;
+    uint8_t parent_age;
+    uint8_t parent_router_id;
+} threadnet_packet_t;
+
 void reportNetworkStatus()
 {
-    // otError err;
-
+    threadnet_packet_t packet;
     otInstance *instance = esp_openthread_get_instance();
 
     otDeviceRole role = otThreadGetDeviceRole(instance);
-    const otExtendedPanId *ext_pan_id = otThreadGetExtendedPanId(instance);
-    // otLinkModeConfig ot_link_mode = otThreadGetLinkMode(instance);
-    const otIp6Address *ot_rloc = otThreadGetRloc(instance);
-    const otIp6Address *ot_mesh_local_eid = otThreadGetMeshLocalEid(instance);
-    // const otMeshLocalPrefix *ot_mesh_local_prefix = otThreadGetMeshLocalPrefix(instance);
-    const otIp6Address *ot_link_local_ipv6 = otThreadGetLinkLocalIp6Address(instance);
-    const otIp6Address *ot_link_local_multicast = otThreadGetLinkLocalAllThreadNodesMulticastAddress(instance);
-    const otIp6Address *ot_realm_local_multicast = otThreadGetRealmLocalAllThreadNodesMulticastAddress(instance);
-    const char *ot_network_name = otThreadGetNetworkName(instance);
-    const char *ot_domain_name = otThreadGetDomainName(instance);
-    // uint32_t ot_key_seq_ctr = otThreadGetKeySequenceCounter(instance);
-    // uint32_t ot_keyswitch_guardtime = otThreadGetKeySwitchGuardTime(instance);
+    packet.role = role;
+
     uint8_t ot_leader_id = otThreadGetLeaderRouterId(instance);
+    packet.ot_leader_id = ot_leader_id;
+
     uint8_t ot_leader_weight = otThreadGetLeaderWeight(instance);
+    packet.ot_leader_weight = ot_leader_weight;
+
     uint32_t ot_partition_id = otThreadGetPartitionId(instance);
+    packet.ot_partition_id = ot_partition_id;
+
     uint16_t ot_rloc_16 = otThreadGetRloc16(instance);
-    // uint16_t ot_version = otThreadGetVersion();
-    // const otIpCounters *ot_ipv6_counters = otThreadGetIp6Counters(instance);
-    // const otMleCounters *ot_mle_counters = otThreadGetMleCounters(instance);
+    packet.ot_rloc_16 = ot_rloc_16;
 
-    // otIp6Address *ot_leader_rloc;
-    // err = otThreadGetLeaderRloc(instance, &ot_leader_rloc);
-    // if (err != OT_ERROR_NONE)
-    // {
-    //     ESP_LOGE(TAG, "Error getting leader RLOC");
-    // }
+    const otIp6Address *ot_mesh_local_eid = otThreadGetMeshLocalEid(instance);
+    otIp6AddressToString(ot_mesh_local_eid, packet.ot_mesh_local_eid, OT_IP6_ADDRESS_STRING_SIZE);
 
-    // otIp6Address *ot_service_rloc;
-    // err = otThreadGetServiceAloc(instance, ot_service_rloc);
+    const otIp6Address *ot_link_local_ipv6 = otThreadGetLinkLocalIp6Address(instance);
+    otIp6AddressToString(ot_link_local_ipv6, packet.ot_link_local_ipv6, OT_IP6_ADDRESS_STRING_SIZE);
 
-    // otNeighborInfo *ot_neighbor_info;
-    // otNeighborInfoIterator *ot_iterator = OT_NEIGHBOR_INFO_ITERATOR_INIT;
-    // err = otThreadGetNextNeighborInfo(instance, &ot_iterator, &ot_neighbor_info);
-    // if (err != OT_ERROR_NONE)
-    // {
-    //     ESP_LOGE(TAG, "Error getting neighbor info");
-    // }
+    otThreadGetParentAverageRssi(instance, &packet.parent_avg_rssi);
+    otThreadGetParentLastRssi(instance, &packet.parent_last_rssi);
 
-    // otLeaderData *ot_leader_data;
-    // err = otThreadGetLeaderData(instance, &ot_leader_data);
-    // if (err != OT_ERROR_NONE)
-    // {
-    //     ESP_LOGE(TAG, "Error getting leader data");
-    // }
+    struct timeval tv_now;
+    gettimeofday(&tv_now, NULL);
+    packet.last_time = tv_now.tv_sec;
 
-    // otRouterInfo *ot_router_info;
-    // err = otThreadGetParentInfo(instance, &ot_router_info);
-    // if (err != OT_ERROR_NONE)
-    // {
-    //     ESP_LOGE(TAG, "Error getting parent info");
-    // }
+    otRouterInfo parent_info;
+    otThreadGetParentInfo(instance, &parent_info);
 
-    // int8_t ot_parent_rssi;
-    // err = otThreadGetParentAverageRssi(instance, &ot_parent_rssi);
-    // if (err != OT_ERROR_NONE)
-    // {
-    //     ESP_LOGE(TAG, "Error getting parent average RSSI");
-    // }
+    packet.parent_next_hop = parent_info.mNextHop;
+    packet.parent_link_quality_in = parent_info.mLinkQualityIn;
+    packet.parent_link_quality_out = parent_info.mLinkQualityOut;
+    packet.parent_rloc16 = parent_info.mRloc16;
+    packet.parent_age = parent_info.mAge;
+    packet.parent_router_id = parent_info.mRouterId;
 
-    // int8_t ot_last_rssi;
-    // err = otThreadGetParentLastRssi(instance, &ot_last_rssi);
-    // if (err != OT_ERROR_NONE)
-    // {
-    //     ESP_LOGE(TAG, "Error getting parent last RSSI");
-    // }
-
-    ESP_LOGI(TAG, "Network Status:");
-
-    ESP_LOGI(TAG, "Role: %s", otThreadDeviceRoleToString(role));
-
-    char ext_pan_id_str[17] = {0};
-    for (int i = 0; i < 8; i++)
-    {
-        snprintf(&ext_pan_id_str[i * 2], 3, "%02X", ext_pan_id->m8[i]);
-    }
-    ESP_LOGI(TAG, "Extended PAN ID: 0x%s", ext_pan_id_str);
-
-    char ip6_str[OT_IP6_ADDRESS_STRING_SIZE];
-    otIp6AddressToString(ot_rloc, ip6_str, sizeof(ip6_str));
-    ESP_LOGI(TAG, "RLOC: %s", ip6_str);
-
-    otIp6AddressToString(ot_mesh_local_eid, ip6_str, sizeof(ip6_str));
-    ESP_LOGI(TAG, "Mesh Local EID: %s", ip6_str);
-
-    otIp6AddressToString(ot_link_local_ipv6, ip6_str, sizeof(ip6_str));
-    ESP_LOGI(TAG, "Link Local IPv6: %s", ip6_str);
-
-    otIp6AddressToString(ot_link_local_multicast, ip6_str, sizeof(ip6_str));
-    ESP_LOGI(TAG, "Link Local Multicast: %s", ip6_str);
-
-    otIp6AddressToString(ot_realm_local_multicast, ip6_str, sizeof(ip6_str));
-    ESP_LOGI(TAG, "Realm Local Multicast: %s", ip6_str);
-
-    ESP_LOGI(TAG, "Network Name: %s", ot_network_name);
-    ESP_LOGI(TAG, "Domain Name: %s", ot_domain_name);
-    ESP_LOGI(TAG, "Leader ID: %u", ot_leader_id);
-    ESP_LOGI(TAG, "Leader Weight: %u", ot_leader_weight);
-    ESP_LOGI(TAG, "Partition ID: %lu", ot_partition_id);
-    ESP_LOGI(TAG, "RLOC16: %d", ot_rloc_16);
-
-    ESP_LOGI(TAG, "End of Network Status");
+    sendUdp(instance, &packet, sizeof(threadnet_packet_t));
 }
