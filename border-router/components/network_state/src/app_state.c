@@ -8,10 +8,9 @@
 #include "openthread/ip6.h"
 #include "openthread/udp.h"
 
-#include "network_state.h"
+#include "app_state.h"
 #include "network_config.h"
 
-#define BROADCAST_PERIOD 10 * 1000 / portTICK_PERIOD_MS
 #define BUFFER_SIZE 256
 
 static const char *TAG = "Network State";
@@ -56,7 +55,7 @@ static void net_state_broadcast_task(void* aContext)
     otInstance *aInstance = esp_openthread_get_instance();
 
     while(1) {
-        vTaskDelay(BROADCAST_PERIOD);
+        vTaskDelay(STATUS_SEND_PERIOD_MS / portTICK_PERIOD_MS);
 
         otIp6AddressToString(otThreadGetMeshLocalEid(aInstance), mesh_local_eid, OT_IP6_ADDRESS_STRING_SIZE);
         sprintf(buf, "transport_mode %d mesh_local_eid %s", transport_mode, mesh_local_eid);

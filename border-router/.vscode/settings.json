@@ -32,7 +32,15 @@
     "message.h": "c",
     "stdatomic.h": "c",
     "string.h": "c",
-    "task.h": "c"
+    "task.h": "c",
+    "cstdlib": "c",
+    "uart_types.h": "c",
+    "threadnet_app.h": "c",
+    "esp_netif.h": "c",
+    "esp_err.h": "c",
+    "nvs_flash.h": "c",
+    "app_state.h": "c",
+    "logging.h": "c"
   },
   "idf.adapterTargetName": "esp32s3"
 }

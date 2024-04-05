@@ -1,3 +1,7 @@
-idf_component_register(SRCS "src/network_state.c"
+set(srcs    "src/app_state.c"
+            "src/node_state.c"
+            "src/udp_status.c")
+
+idf_component_register(SRCS "${srcs}"
                     INCLUDE_DIRS "include"
                     REQUIRES openthread led)

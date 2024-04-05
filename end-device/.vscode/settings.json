@@ -27,6 +27,15 @@
         "test_start_receiver.h": "c",
         "esp_openthread.h": "c",
         "esp_log.h": "c",
-        "udp.h": "c"
+        "udp.h": "c",
+        "code_tools.h": "c",
+        "esp_err.h": "c",
+        "tasklet.h": "c",
+        "esp_openthread_netif_glue.h": "c",
+        "unistd.h": "c",
+        "string.h": "c",
+        "esp_netif.h": "c",
+        "esp_openthread_types.h": "c",
+        "instance.h": "c"
     }
 }

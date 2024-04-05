@@ -5,6 +5,6 @@
 
 transport_mode_t get_transport_mode(void);
 
-void get_network_host_ip(char*);
+void get_app_ip(char*);
 
-void init_net_state_message_handler(void);
+void init_app_state_message_handler(void);

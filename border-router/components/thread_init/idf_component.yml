@@ -5,3 +5,5 @@ dependencies:
   ## Required IDF version
   idf:
     version: ">=4.1.0"
+  network_config: 
+    path: ../../../common/components/network_config

@@ -1,20 +1,16 @@
-#include <esp_err.h>
-#include <esp_vfs_eventfd.h>
-
+#include "esp_err.h"
+#include "esp_event.h"
 #include "nvs_flash.h"
 #include "esp_netif.h"
 #include "esp_netif_types.h"
-#include "esp_event.h"
+#include "esp_vfs_eventfd.h"
 
-#include "test_runner.h"
-#include "network_state.h"
+#include "app_state.h"
+#include "foreign_status.h"
+#include "node_state.h"
 #include "thread_init.h"
-#include "wifi.h"
-
 #include "threadnet_app.h"
-#include "thread_init.h"
-
-#include "esp_log.h"
+#include "wifi.h"
 
 void app_main(void)
 {
@@ -27,13 +23,10 @@ void app_main(void)
     ESP_ERROR_CHECK(esp_netif_init());
     ESP_ERROR_CHECK(esp_event_loop_create_default());
 
-    register_update_cb(&update_tracked_node);
-
     wifi_init_softap();
     start_thread_network();
     start_threadnet_app();
 
-    // init_test_listeners();
-    // start_net_state_broadcasts();
-    // start_test_loop();
+    start_node_status_messages();
+    start_net_state_broadcasts();
 }
