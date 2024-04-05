@@ -60,7 +60,7 @@ static void net_state_broadcast_task(void* aContext)
         otIp6AddressToString(otThreadGetMeshLocalEid(aInstance), mesh_local_eid, OT_IP6_ADDRESS_STRING_SIZE);
         sprintf(buf, "transport_mode %d mesh_local_eid %s", transport_mode, mesh_local_eid);
 
-        ESP_LOGI(TAG, "Message: >%s<", buf);
+        ESP_LOGI(TAG, "Broadcasting app state with transport mode %d", transport_mode);
 
         // Acquire OT Lock
         esp_openthread_lock_acquire(portMAX_DELAY);

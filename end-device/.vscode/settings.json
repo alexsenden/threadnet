@@ -36,6 +36,9 @@
         "string.h": "c",
         "esp_netif.h": "c",
         "esp_openthread_types.h": "c",
-        "instance.h": "c"
+        "instance.h": "c",
+        "cstdint": "c",
+        "app_state.h": "c",
+        "utils.h": "c"
     }
 }

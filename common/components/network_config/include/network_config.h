@@ -35,4 +35,13 @@ typedef struct threadnet_packet
     uint16_t parent_rloc16;
     uint8_t parent_age;
     uint8_t parent_router_id;
+    uint8_t sequence_num;
+    uint32_t avg_rtt_millis;
+    float packet_success_rate;
 } threadnet_packet_t;
+
+typedef struct ack_packet
+{
+    char ot_mesh_local_eid[OT_IP6_ADDRESS_STRING_SIZE];
+    uint8_t sequence_num;
+} ack_packet_t;

@@ -9,10 +9,33 @@
 #include "app_state.h"
 #include "code_tools.h"
 #include "network_config.h"
+#include "node_state.h"
 
 #define TAG "UDP Status"
 
-static otUdpSocket app_state_socket;
+static otUdpSocket node_state_socket;
+
+void handle_status_ack_udp(void *aContext, otMessage *aMessage,
+                      const otMessageInfo *aMessageInfo)
+{
+    // Short circuit if this message is of an inactive type
+    if(get_transport_mode() != TRANSPORT_MODE_UDP) {
+        return;
+    }
+
+    char peerAddr[OT_IP6_ADDRESS_STRING_SIZE];
+    otIp6AddressToString(&aMessageInfo->mPeerAddr, peerAddr, OT_IP6_ADDRESS_STRING_SIZE);    
+
+    size_t dataLength = otMessageGetLength(aMessage);
+    uint16_t offset = otMessageGetOffset(aMessage);
+    uint8_t data[dataLength];
+    otMessageRead(aMessage, offset, data, dataLength);
+
+    ack_packet_t *packet = (ack_packet_t *)data;
+
+    ESP_LOGI(TAG, "Received UDP ACK message from %s with seq# %d", peerAddr, packet->sequence_num);
+    handle_ack(packet);
+}
 
 /**
  * Initialize UDP socket
@@ -21,12 +44,13 @@ void init_node_status_socket_udp(otInstance *aInstance)
 {
     otSockAddr listenSockAddr;
 
-    memset(&app_state_socket, 0, sizeof(app_state_socket));
+    memset(&node_state_socket, 0, sizeof(node_state_socket));
     memset(&listenSockAddr, 0, sizeof(listenSockAddr));
 
     listenSockAddr.mPort = UDP_STATUS_PORT;
 
-    otUdpBind(aInstance, &app_state_socket, &listenSockAddr, OT_NETIF_THREAD);
+    otUdpOpen(aInstance, &node_state_socket, handle_status_ack_udp, aInstance);
+    otUdpBind(aInstance, &node_state_socket, &listenSockAddr, OT_NETIF_THREAD);
 }
 
 /**
@@ -54,7 +78,7 @@ void send_status_udp(otInstance *aInstance, void *buffer, uint32_t size)
     otEXPECT(error == OT_ERROR_NONE);
 
     ESP_LOGI(TAG, "Sending UDP message to %s port %d", app_host_addr, UDP_STATUS_PORT);
-    error = otUdpSend(aInstance, &app_state_socket, message, &messageInfo);
+    error = otUdpSend(aInstance, &node_state_socket, message, &messageInfo);
 
 exit:
     if (error != OT_ERROR_NONE && message != NULL)

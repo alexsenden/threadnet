@@ -1,2 +1,3 @@
-idf_component_register(SRCS "src/network_config.c"
-                    INCLUDE_DIRS "include")
+idf_component_register(SRCS "src/utils.c"
+                    INCLUDE_DIRS "include"
+                    REQUIRES openthread)

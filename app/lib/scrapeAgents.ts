@@ -31,6 +31,8 @@ export interface NodeEntry {
   parentRloc16: number;
   parentAge: number;
   parentRouterId: number;
+  avgRttMillis: number;
+  packetSuccessRate: number;
 }
 
 type AgentDataResponse =
@@ -87,6 +89,8 @@ async function getAgentData(): Promise<AgentDataResponse> {
   const idx_parent_rloc16 = headerCols.indexOf("parent_rloc16");
   const idx_parent_age = headerCols.indexOf("parent_age");
   const idx_parent_router_id = headerCols.indexOf("parent_router_id");
+  const idx_avg_rtt_millis = headerCols.indexOf("avg_rtt_millis");
+  const idx_packet_success_rate = headerCols.indexOf("packet_success_rate");
 
   lines.forEach((line) => {
     const parts = line.split(",");
@@ -112,6 +116,8 @@ async function getAgentData(): Promise<AgentDataResponse> {
       parentRloc16: Number(parts[idx_parent_rloc16]),
       parentAge: Number(parts[idx_parent_age]),
       parentRouterId: Number(parts[idx_parent_router_id]),
+      avgRttMillis: Number(parts[idx_avg_rtt_millis]),
+      packetSuccessRate: Number(parts[idx_packet_success_rate]),
     });
   });
 

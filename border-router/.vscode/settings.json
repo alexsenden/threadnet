@@ -40,7 +40,18 @@
     "esp_err.h": "c",
     "nvs_flash.h": "c",
     "app_state.h": "c",
-    "logging.h": "c"
+    "logging.h": "c",
+    "code_tools.h": "c",
+    "udp.h": "c",
+    "udp_status.h": "c",
+    "bitset": "c",
+    "buffer": "c",
+    "internet": "c",
+    "socket": "c",
+    "string_view": "c",
+    "initializer_list": "c",
+    "span": "c",
+    "regex": "c"
   },
   "idf.adapterTargetName": "esp32s3"
 }

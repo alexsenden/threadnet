@@ -1,27 +1,28 @@
 {
-  "configurations": [
-    {
-      "name": "ESP-IDF",
-      "compileCommands": "${workspaceFolder}/build/compile_commands.json",
-      "includePath": [
-        "${config:idf.espIdfPath}/components/**",
-        "${config:idf.espIdfPathWin}/components/**",
-        "${config:idf.espAdfPath}/components/**",
-        "${config:idf.espAdfPathWin}/components/**",
-        "${workspaceFolder}/**",
-        "${workspaceFolder}/../common/**"
-      ],
-      "browse": {
-        "path": [
-          "${config:idf.espIdfPath}/components",
-          "${config:idf.espIdfPathWin}/components",
-          "${config:idf.espAdfPath}/components/**",
-          "${config:idf.espAdfPathWin}/components/**",
-          "${workspaceFolder}"
-        ],
-        "limitSymbolsToIncludedHeaders": false
-      }
-    }
-  ],
-  "version": 4
+    "configurations": [
+        {
+            "name": "ESP-IDF",
+            "compileCommands": "${workspaceFolder}/build/compile_commands.json",
+            "includePath": [
+                "${config:idf.espIdfPath}/components/**",
+                "${config:idf.espIdfPathWin}/components/**",
+                "${config:idf.espAdfPath}/components/**",
+                "${config:idf.espAdfPathWin}/components/**",
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/../common/**",
+                "C:/Espressif/tools/riscv32-esp-elf/esp-13.2.0_20230928/riscv32-esp-elf/riscv32-esp-elf/include"
+            ],
+            "browse": {
+                "path": [
+                    "${config:idf.espIdfPath}/components",
+                    "${config:idf.espIdfPathWin}/components",
+                    "${config:idf.espAdfPath}/components/**",
+                    "${config:idf.espAdfPathWin}/components/**",
+                    "${workspaceFolder}"
+                ],
+                "limitSymbolsToIncludedHeaders": false
+            }
+        }
+    ],
+    "version": 4
 }

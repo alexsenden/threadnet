@@ -5,6 +5,8 @@
 #include "openthread/udp.h"
 
 #include "app_state.h"
+#include "code_tools.h"
+#include "foreign_status.h"
 #include "network_config.h"
 #include "threadnet_app.h"
 
@@ -12,18 +14,48 @@
 
 static otUdpSocket foreign_status_udp_socket;
 
+static void send_status_ack_udp(ack_packet_t *ack_packet)
+{
+    otError error = OT_ERROR_NONE;
+    otMessage *message;
+    otMessageInfo messageInfo;
+    otIp6Address destinationAddr;
+    otInstance *ot_instance = esp_openthread_get_instance();
+
+    memset(&messageInfo, 0, sizeof(messageInfo));
+
+    otIp6AddressFromString(ack_packet->ot_mesh_local_eid, &destinationAddr);
+    messageInfo.mPeerAddr = destinationAddr;
+    messageInfo.mPeerPort = UDP_STATUS_PORT;
+
+    message = otUdpNewMessage(ot_instance, NULL);
+    otEXPECT_ACTION(message != NULL, error = OT_ERROR_NO_BUFS);
+
+    error = otMessageAppend(message, ack_packet, sizeof(ack_packet_t));
+    otEXPECT(error == OT_ERROR_NONE);
+
+    ESP_LOGI(TAG, "Sending UDP ack to %s port %d", ack_packet->ot_mesh_local_eid, UDP_STATUS_PORT);
+    error = otUdpSend(ot_instance, &foreign_status_udp_socket, message, &messageInfo);
+
+exit:
+    if (error != OT_ERROR_NONE && message != NULL)
+    {
+        otMessageFree(message);
+    }
+}
+
 void handle_foreign_status_udp(void *aContext, otMessage *aMessage,
                       const otMessageInfo *aMessageInfo)
 {
-    char peerAddr[OT_IP6_ADDRESS_STRING_SIZE];
-    otIp6AddressToString(&aMessageInfo->mPeerAddr, peerAddr, OT_IP6_ADDRESS_STRING_SIZE);
-
-    ESP_LOGI(TAG, "Received UDP message from %s", peerAddr);
-
     // Short circuit if this message is of an inactive type
     if(get_transport_mode() != TRANSPORT_MODE_UDP) {
         return;
     }
+
+    char peerAddr[OT_IP6_ADDRESS_STRING_SIZE];
+    otIp6AddressToString(&aMessageInfo->mPeerAddr, peerAddr, OT_IP6_ADDRESS_STRING_SIZE);
+
+    ESP_LOGI(TAG, "Received UDP message from %s", peerAddr);
 
     size_t dataLength = otMessageGetLength(aMessage);
     uint16_t offset = otMessageGetOffset(aMessage);
@@ -37,6 +69,10 @@ void handle_foreign_status_udp(void *aContext, otMessage *aMessage,
     packet->last_time = tv_now.tv_sec;
 
     update_tracked_node(packet);
+
+    ack_packet_t ack_packet;
+    set_ack_packet(&ack_packet, packet);
+    send_status_ack_udp(&ack_packet);
 }
 
 void init_udp_status_socket(otInstance *aInstance)
