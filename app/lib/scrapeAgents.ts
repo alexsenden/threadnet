@@ -1,7 +1,5 @@
 const AGENT_HOSTNAME = "http://192.168.4.1";
 
-// 0,4,fd00:db8:a0:0:8e7e:ff6e:f9af:601c,fe80:0:0:0:e805:d71e:274:7031,23,64,1833009079,23552,127,0,1,0,0,0,0,240,0
-
 export enum NodeRole {
   disabled = 0,
   detached = 1,
