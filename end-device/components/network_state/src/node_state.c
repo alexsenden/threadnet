@@ -10,6 +10,7 @@
 
 #include "app_state.h"
 #include "code_tools.h"
+#include "multicast_status.h"
 #include "network_config.h"
 #include "udp_status.h"
 #include "utils.h"
@@ -25,6 +26,14 @@ typedef struct packet_metrics {
 static packet_metrics_t packet_history[PACKET_MEMORY_SIZE];
 static uint8_t next_seq_num = 0;
 
+void clear_history(void)
+{
+    for(int i = 0; i < PACKET_MEMORY_SIZE; i++) {
+        packet_history[i].rtt = 0;
+        packet_history[i].send_time_millis = 0;
+    }
+}
+
 void handle_ack(ack_packet_t *ack_packet) {
     if(ack_packet->sequence_num < PACKET_MEMORY_SIZE) {
         packet_metrics_t *metrics = &packet_history[ack_packet->sequence_num];
@@ -38,6 +47,7 @@ static void send_status(otInstance *aInstance, void *buffer, uint32_t size)
         case TRANSPORT_MODE_TCP:
             break;
         case TRANSPORT_MODE_MULTI:
+            send_status_multicast(aInstance, buffer, size);
             break;
         case TRANSPORT_MODE_UDP:
             send_status_udp(aInstance, buffer, size);
@@ -104,7 +114,7 @@ static void report_node_status()
     }
     int successful_packets = (sent_packets - lost_packets);
     packet.avg_rtt_millis = (successful_packets != 0) ? rtt_sum / successful_packets : 0;
-    packet.packet_success_rate = (sent_packets != 0) ? (float)(sent_packets - lost_packets) / sent_packets : 0;
+    packet.packet_success_rate = (sent_packets != 0) ? ((float)(sent_packets - lost_packets)) / sent_packets : 0;
 
     packet_history[next_seq_num].rtt = 0;
     packet_history[next_seq_num].send_time_millis = current_time_millis();
@@ -127,6 +137,7 @@ void send_node_status()
 static void init_node_status_sockets(otInstance *aInstance)
 {
     init_node_status_socket_udp(aInstance);
+    init_node_status_socket_multicast(aInstance);
     // Add other socket inits here
 }
 

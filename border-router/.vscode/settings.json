@@ -51,7 +51,8 @@
     "string_view": "c",
     "initializer_list": "c",
     "span": "c",
-    "regex": "c"
+    "regex": "c",
+    "foreign_status.h": "c"
   },
   "idf.adapterTargetName": "esp32s3"
 }

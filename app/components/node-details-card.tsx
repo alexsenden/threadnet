@@ -69,7 +69,7 @@ function NodeDetailsCard(props: INodeDetailsCardProps) {
         <span className="text-foreground font-semibold">
           Average Round Trip Time:&nbsp;
         </span>
-        <span className="text-foreground">{(props.node?.avgRttMillis || 0) / 1000}s</span>
+        <span className="text-foreground">{((props.node?.avgRttMillis || 0) / 1000).toFixed(3)}s</span>
       </div>
       <div>
         <span className="text-foreground font-semibold">

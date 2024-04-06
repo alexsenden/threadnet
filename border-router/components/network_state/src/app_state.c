@@ -15,7 +15,7 @@
 
 static const char *TAG = "Network State";
 
-static transport_mode_t transport_mode = TRANSPORT_MODE_UDP;
+static transport_mode_t transport_mode = TRANSPORT_MODE_MULTI;
 
 transport_mode_t get_transport_mode() {
     return transport_mode;

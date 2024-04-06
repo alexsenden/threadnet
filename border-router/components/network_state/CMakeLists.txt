@@ -1,5 +1,6 @@
 set(srcs    "src/app_state.c"
             "src/foreign_status.c"
+            "src/multicast_status.c"
             "src/node_state.c"
             "src/udp_status.c")
 

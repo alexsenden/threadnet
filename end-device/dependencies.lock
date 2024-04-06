@@ -34,6 +34,6 @@ dependencies:
       path: C:\Users\asend\Projects\4300\threadnet\end-device\components\thread_init
       type: local
     version: '*'
-manifest_hash: 936b87f13fdeae1e437c3b49a7c6e5504e6e05a2d7efba16a0009d1c86bbcb24
+manifest_hash: 4b646821d880e8176330972d693a64553ca2cb5a2f607bb8c337c3406803391e
 target: esp32c6
 version: 1.0.0

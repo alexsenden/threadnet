@@ -3,6 +3,8 @@
 #include <unistd.h>
 #include "esp_openthread.h"
 
+#define MESH_MULTICAST_ADDR "ff03::1"
+
 #define TRANSPORT_MODE_TCP   1
 #define TRANSPORT_MODE_UDP   2
 #define TRANSPORT_MODE_MULTI 3
@@ -10,6 +12,7 @@
 #define TCP_STATUS_PORT 8881
 #define UDP_STATUS_PORT 8882
 #define MULTICAST_STATUS_PORT 8883
+#define MULTICAST_ACK_PORT 8884
 
 #define TRANSPORT_MODE_BROADCAST_PORT 8888
 

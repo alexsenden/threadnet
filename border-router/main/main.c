@@ -5,9 +5,6 @@
 #include "esp_netif_types.h"
 #include "esp_vfs_eventfd.h"
 
-#include "app_state.h"
-#include "foreign_status.h"
-#include "node_state.h"
 #include "thread_init.h"
 #include "threadnet_app.h"
 #include "wifi.h"
@@ -26,7 +23,4 @@ void app_main(void)
     wifi_init_softap();
     start_thread_network();
     start_threadnet_app();
-
-    start_node_status_messages();
-    start_net_state_broadcasts();
 }

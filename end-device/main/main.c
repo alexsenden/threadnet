@@ -24,7 +24,4 @@ void app_main(void)
 
     init_led();
     start_thread_network();
-
-    init_app_state_message_handler();
-    start_node_status_messages();
 }

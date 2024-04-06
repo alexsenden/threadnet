@@ -28,7 +28,9 @@
 #include "openthread/udp.h"
 #include "openthread/message.h"
 
+#include "app_state.h"
 #include "foreign_status.h"
+#include "node_state.h"
 #include "thread_init.h"
 
 #define TAG "thread_worker"
@@ -71,6 +73,8 @@ static void ot_task_worker(void *aContext)
     esp_netif_set_default_netif(openthread_netif);
 
     init_foreign_status_sockets();
+    start_node_status_messages();
+    start_net_state_broadcasts();
 
     ESP_ERROR_CHECK(esp_openthread_auto_start(NULL));
 

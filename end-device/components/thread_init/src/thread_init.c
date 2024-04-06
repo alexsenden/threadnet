@@ -20,6 +20,9 @@
 #include "openthread/tasklet.h"
 #include "openthread/udp.h"
 
+#include "app_state.h"
+#include "node_state.h"
+
 #define TAG "thread_worker"
 
 static esp_netif_t *init_openthread_netif(const esp_openthread_platform_config_t *config)
@@ -49,6 +52,9 @@ static void ot_task_worker(void *aContext)
     esp_netif_set_default_netif(openthread_netif);
 
     esp_openthread_lock_init();
+
+    start_node_status_messages();
+    init_app_state_message_handler();
 
     ESP_ERROR_CHECK(esp_openthread_auto_start(NULL));
     esp_openthread_launch_mainloop();

@@ -7,6 +7,7 @@
 #include "openthread/udp.h"
 
 #include "network_config.h"
+#include "node_state.h"
 #include "led.h"
 
 #define TAG "Net State"
@@ -45,6 +46,7 @@ void set_transport_mode(transport_mode_t new_mode)
     if(transport_mode != new_mode) {
         transport_mode = new_mode;
         set_transport_mode_led(transport_mode);
+        clear_history();
     }
 }
 
