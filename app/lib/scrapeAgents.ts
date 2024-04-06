@@ -137,4 +137,60 @@ async function getAgentData(): Promise<AgentDataResponse> {
   };
 }
 
-export { getAgentData };
+async function getSampleAgentData(): Promise<AgentDataResponse> {
+  return {
+    status: "success",
+    result: [
+      {
+        id: 53248,
+        name: "fd00:db8:a0:0:c153:c515:2c94:f913",
+        parent: 36864,
+        index: 0,
+        role: 3,
+        meshLocalEid: "fd00:db8:a0:0:c153:c515:2c94:f913",
+        linkLocalIPv6: "fe80:0:0:0:748f:9a42:c345:7273",
+        leaderId: 36,
+        leaderWeight: 64,
+        partitionId: 821843429,
+        rloc16: 53248,
+        parentAvgRssi: -30,
+        parentLastRssi: -31,
+        lastUpdated: new Date().getUTCSeconds(),
+        parentNextHop: 0,
+        parentLinkQualityIn: 3,
+        parentLinkQualityOut: 3,
+        parentRloc16: 36864,
+        parentAge: 254,
+        parentRouterId: 36,
+        avgRttMillis: 98,
+        packetSuccessRate: 0.25,
+      },
+      {
+        id: 36864,
+        name: "fd00:db8:a0:0:b079:5a2b:506d:df8e",
+        parent: undefined,
+        index: 1,
+        role: 4,
+        meshLocalEid: "fd00:db8:a0:0:b079:5a2b:506d:df8e",
+        linkLocalIPv6: "fe80:0:0:0:686e:af66:ba07:f47f",
+        leaderId: 36,
+        leaderWeight: 64,
+        partitionId: 821843429,
+        rloc16: 36864,
+        parentAvgRssi: 127,
+        parentLastRssi: 0,
+        lastUpdated: new Date().getUTCSeconds(),
+        parentNextHop: 0,
+        parentLinkQualityIn: 0,
+        parentLinkQualityOut: 0,
+        parentRloc16: 0,
+        parentAge: 140,
+        parentRouterId: 0,
+        avgRttMillis: 0,
+        packetSuccessRate: 0,
+      },
+    ],
+  };
+}
+
+export { getAgentData, getSampleAgentData };
