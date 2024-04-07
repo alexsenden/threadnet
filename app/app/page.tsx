@@ -2,6 +2,7 @@ import dynamic from "next/dynamic";
 import { getAgentData, getSampleAgentData } from "@/lib/scrapeAgents";
 import AutoReload from "@/components/auto-reload";
 import { BiSolidNetworkChart } from "react-icons/bi";
+import SettingsMenubar from "@/components/settings-menubar";
 const NetworkGraph = dynamic(() => import("@/components/network-graph"), {
   ssr: false,
 });
@@ -21,12 +22,14 @@ export default async function Home() {
 
   return (
     <div>
-      <div className="py-8 px-12 mb-8 border-b flex justify-between items-center">
-        <div className="select-none pointer-events-none flex items-center">
+      <div className="py-8 px-12 mb-8 border-b flex justify-between items-center select-none">
+        <div className="flex items-center">
           <BiSolidNetworkChart size="1.5rem" />
           <h1 className="font-semibold text-2xl">&nbsp;ThreadNet Explorer</h1>
         </div>
-        <div></div>
+        <div className="flex gap-4 items-center">
+          <SettingsMenubar />
+        </div>
       </div>
       <div className="relative min-h-[80vh] h-full w-full">
         <AutoReload />

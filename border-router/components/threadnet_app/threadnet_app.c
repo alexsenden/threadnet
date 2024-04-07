@@ -2,6 +2,7 @@
 #include "freertos/FreeRTOS.h"
 #include "esp_http_server.h"
 #include "esp_sntp.h"
+#include "app_state.h"
 
 #include "network_config.h"
 
@@ -45,10 +46,72 @@ esp_err_t get_handler(httpd_req_t *req)
     return ESP_OK;
 }
 
+esp_err_t transport_handler(httpd_req_t *req)
+{
+
+    // get the content length
+    size_t content_length = req->content_len;
+    char *content = malloc(content_length + 1);
+    if (content == NULL)
+    {
+        ESP_LOGE(TAG, "Failed to allocate memory for content");
+        return ESP_FAIL;
+    }
+
+    // read the content
+    if (httpd_req_recv(req, content, content_length) <= 0)
+    {
+        ESP_LOGE(TAG, "Failed to read content");
+        free(content);
+        return ESP_FAIL;
+    }
+    content[content_length] = '\0';
+
+    // parse the content (check if it is "udp", "tcp", or "multi")
+    if (strcmp(content, "udp") == 0)
+    {
+        set_transport_mode(TRANSPORT_MODE_UDP);
+    }
+    else if (strcmp(content, "tcp") == 0)
+    {
+        set_transport_mode(TRANSPORT_MODE_TCP);
+    }
+    else if (strcmp(content, "multi") == 0)
+    {
+        set_transport_mode(TRANSPORT_MODE_MULTI);
+    }
+    else
+    {
+        ESP_LOGI(TAG, "Invalid transport mode: %s", content);
+        free(content);
+
+        /* Send a simple response */
+        char resp[] = "INVALID\n";
+        httpd_resp_set_type(req, "text/plain");
+        httpd_resp_send(req, resp, HTTPD_RESP_USE_STRLEN);
+
+        return ESP_OK;
+    }
+
+    free(content);
+
+    /* Send a simple response */
+    char resp[] = "OK\n";
+    httpd_resp_set_type(req, "text/plain");
+    httpd_resp_send(req, resp, HTTPD_RESP_USE_STRLEN);
+    return ESP_OK;
+}
+
 httpd_uri_t uri_get = {
     .uri = "/",
     .method = HTTP_GET,
     .handler = get_handler,
+    .user_ctx = NULL};
+
+httpd_uri_t uri_change_transport = {
+    .uri = "/transport",
+    .method = HTTP_POST,
+    .handler = transport_handler,
     .user_ctx = NULL};
 
 void start_threadnet_app(void)
