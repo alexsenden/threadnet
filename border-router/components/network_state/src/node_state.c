@@ -54,6 +54,7 @@ static void reportNetworkStatus()
     packet.parent_rloc16 = parent_info.mRloc16;
     packet.parent_age = parent_info.mAge;
     packet.parent_router_id = parent_info.mRouterId;
+    packet.packet_success_rate = -1;
 
     update_tracked_node(&packet);
 }

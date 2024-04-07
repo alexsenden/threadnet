@@ -7,8 +7,8 @@ const NetworkGraph = dynamic(() => import("@/components/network-graph"), {
 });
 
 export default async function Home() {
-  // const data = await getAgentData();
-  const data = await getSampleAgentData();
+  const data = await getAgentData();
+  //const data = await getSampleAgentData();
 
   if (data.status == "error") {
     return (

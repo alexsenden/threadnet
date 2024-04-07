@@ -26,6 +26,7 @@ static void send_status_ack_multicast(ack_packet_t *ack_packet)
     memset(&messageInfo, 0, sizeof(messageInfo));
 
     otIp6AddressFromString(MESH_MULTICAST_ADDR, &destinationAddr);
+    messageInfo.mHopLimit = 0xFF;
     messageInfo.mPeerAddr = destinationAddr;
     messageInfo.mPeerPort = MULTICAST_ACK_PORT;
 

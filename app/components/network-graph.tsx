@@ -55,6 +55,9 @@ function NetworkGraph({ data }: INetworkGraphProps) {
   };
 
   const selectedNodeObj = nodes.find((node) => node.id === selectedNode);
+  if(selectedNode && !selectedNodeObj) {
+    setSelectedNode(null)
+  }
 
   return (
     <>
