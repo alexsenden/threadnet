@@ -20,6 +20,13 @@ export default async function Home() {
     );
   }
 
+  const avgRttMillis =
+    data.result.reduce((acc, node) => acc + node.avgRttMillis, 0) /
+    data.result.length;
+  const avgPacketSuccessRate =
+    data.result.reduce((acc, node) => acc + node.packetSuccessRate * 100, 0) /
+    data.result.length;
+
   return (
     <div>
       <div className="py-8 px-12 mb-8 border-b flex justify-between items-center select-none">
@@ -28,6 +35,14 @@ export default async function Home() {
           <h1 className="font-semibold text-2xl">&nbsp;ThreadNet Explorer</h1>
         </div>
         <div className="flex gap-4 items-center">
+          <div className="flex gap-2 items-center">
+            <p className="font-semibold">Avg RTT:</p>
+            <p>{avgRttMillis.toFixed(2)}ms</p>
+          </div>
+          <div className="flex gap-2 items-center">
+            <p className="font-semibold">Avg Packet Success Rate:</p>
+            <p>{avgPacketSuccessRate.toFixed(2)}%</p>
+          </div>
           <SettingsMenubar />
         </div>
       </div>
