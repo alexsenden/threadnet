@@ -140,7 +140,7 @@ httpd_uri_t uri_change_transport = {
     .handler = transport_set_handler,
     .user_ctx = NULL};
 
-httpd_uri_t uri_change_transport = {
+httpd_uri_t uri_get_transport = {
     .uri = "/transport",
     .method = HTTP_GET,
     .handler = transport_get_handler,
@@ -163,6 +163,8 @@ void start_threadnet_app(void)
 
         /* Register URI handlers */
         httpd_register_uri_handler(server, &uri_get);
+        httpd_register_uri_handler(server, &uri_change_transport);
+        httpd_register_uri_handler(server, &uri_get_transport);
     }
     else
     {
