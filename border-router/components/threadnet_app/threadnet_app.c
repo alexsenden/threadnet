@@ -46,7 +46,7 @@ esp_err_t get_handler(httpd_req_t *req)
     return ESP_OK;
 }
 
-esp_err_t transport_handler(httpd_req_t *req)
+esp_err_t transport_set_handler(httpd_req_t *req)
 {
 
     // get the content length
@@ -102,6 +102,32 @@ esp_err_t transport_handler(httpd_req_t *req)
     return ESP_OK;
 }
 
+esp_err_t transport_get_handler(httpd_req_t *req)
+{
+
+    char resp[MAX_CONTENT_LENGTH];
+
+    switch (get_transport_mode())
+    {
+    case TRANSPORT_MODE_UDP:
+        snprintf(resp, MAX_CONTENT_LENGTH, "udp");
+        break;
+    case TRANSPORT_MODE_TCP:
+        snprintf(resp, MAX_CONTENT_LENGTH, "tcp");
+        break;
+    case TRANSPORT_MODE_MULTI:
+        snprintf(resp, MAX_CONTENT_LENGTH, "multi");
+        break;
+    default:
+        snprintf(resp, MAX_CONTENT_LENGTH, "INVALID");
+        break;
+    }
+
+    httpd_resp_set_type(req, "text/plain");
+    httpd_resp_send(req, resp, HTTPD_RESP_USE_STRLEN);
+    return ESP_OK;
+}
+
 httpd_uri_t uri_get = {
     .uri = "/",
     .method = HTTP_GET,
@@ -111,7 +137,13 @@ httpd_uri_t uri_get = {
 httpd_uri_t uri_change_transport = {
     .uri = "/transport",
     .method = HTTP_POST,
-    .handler = transport_handler,
+    .handler = transport_set_handler,
+    .user_ctx = NULL};
+
+httpd_uri_t uri_change_transport = {
+    .uri = "/transport",
+    .method = HTTP_GET,
+    .handler = transport_get_handler,
     .user_ctx = NULL};
 
 void start_threadnet_app(void)

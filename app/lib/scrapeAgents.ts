@@ -191,4 +191,57 @@ async function getSampleAgentData(): Promise<AgentDataResponse> {
   };
 }
 
-export { getAgentData, getSampleAgentData };
+type AgentTransportResponse =
+  | {
+      status: "success";
+      result: "UDP" | "TCP" | "MULTI";
+    }
+  | {
+      status: "error";
+    };
+
+async function getTransportMode(): Promise<AgentTransportResponse> {
+  const result = await fetch(`${AGENT_HOSTNAME}/transport`, {
+    cache: "no-cache",
+  });
+
+  if (result.status != 200) {
+    return {
+      status: "error",
+    };
+  }
+
+  switch (await result.text()) {
+    case "udp":
+      return {
+        status: "success",
+        result: "UDP",
+      };
+    case "tcp":
+      return {
+        status: "success",
+        result: "TCP",
+      };
+    case "multi":
+      return {
+        status: "success",
+        result: "MULTI",
+      };
+    default:
+      return {
+        status: "error",
+      };
+  }
+}
+
+async function setTransportMode(mode: "UDP" | "TCP" | "MULTI") {
+  const result = await fetch(`${AGENT_HOSTNAME}/transport`, {
+    method: "POST",
+    body: mode,
+  });
+
+  const response = await result.text();
+  return response == "OK";
+}
+
+export { getAgentData, getSampleAgentData, getTransportMode, setTransportMode };
