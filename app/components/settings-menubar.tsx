@@ -8,19 +8,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { BsFillLightningChargeFill } from "react-icons/bs";
+import { changeTransport } from "@/actions/changeTransport";
 
-function SettingsMenubar() {
-  // <BsFillLightningChargeFill size="1.5rem" />
+interface ISettingsMenubarProps {
+  transport: "UDP" | "TCP" | "MULTI";
+}
+function SettingsMenubar(props: ISettingsMenubarProps) {
+  async function updateServer(value: "UDP" | "TCP" | "MULTI") {
+    const res = await changeTransport(value);
+    console.log(res);
+  }
+
   return (
-    <Select defaultValue="udp">
+    <Select defaultValue={props.transport} onValueChange={updateServer}>
       <SelectTrigger className="w-[180px]">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="udp">UDP</SelectItem>
-        <SelectItem value="multicast">Multicast</SelectItem>
-        <SelectItem value="tcp" disabled>
+        <SelectItem value="UDP">UDP</SelectItem>
+        <SelectItem value="MULTI">Multicast</SelectItem>
+        <SelectItem value="TCP" disabled>
           TCP
         </SelectItem>
       </SelectContent>

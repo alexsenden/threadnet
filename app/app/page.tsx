@@ -1,5 +1,5 @@
 import dynamic from "next/dynamic";
-import { getAgentData, getSampleAgentData } from "@/lib/scrapeAgents";
+import { getAgentData, getTransportMode } from "@/lib/scrapeAgents";
 import AutoReload from "@/components/auto-reload";
 import { BiSolidNetworkChart } from "react-icons/bi";
 import SettingsMenubar from "@/components/settings-menubar";
@@ -27,6 +27,11 @@ export default async function Home() {
     data.result.reduce((acc, node) => acc + node.packetSuccessRate * 100, 0) /
     data.result.length;
 
+  const transport = await getTransportMode();
+  if (transport.status != "success") {
+    <div>Error getting transport status</div>;
+  }
+
   return (
     <div>
       <div className="py-8 px-12 mb-8 border-b flex justify-between items-center select-none">
@@ -43,7 +48,11 @@ export default async function Home() {
             <p className="font-semibold">Avg Packet Success Rate:</p>
             <p>{avgPacketSuccessRate.toFixed(2)}%</p>
           </div>
-          <SettingsMenubar />
+          <SettingsMenubar
+            transport={
+              transport.status === "success" ? transport.result : "UDP"
+            }
+          />
         </div>
       </div>
       <div className="relative min-h-[80vh] h-full w-full">

@@ -240,7 +240,9 @@ async function setTransportMode(mode: "UDP" | "TCP" | "MULTI") {
     body: mode,
   });
 
+  console.log(result);
   const response = await result.text();
+
   return response == "OK";
 }
 

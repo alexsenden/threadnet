@@ -68,15 +68,15 @@ esp_err_t transport_set_handler(httpd_req_t *req)
     content[content_length] = '\0';
 
     // parse the content (check if it is "udp", "tcp", or "multi")
-    if (strcmp(content, "udp") == 0)
+    if (strcmp(content, "UDP") == 0)
     {
         set_transport_mode(TRANSPORT_MODE_UDP);
     }
-    else if (strcmp(content, "tcp") == 0)
+    else if (strcmp(content, "TCP") == 0)
     {
         set_transport_mode(TRANSPORT_MODE_TCP);
     }
-    else if (strcmp(content, "multi") == 0)
+    else if (strcmp(content, "MULTI") == 0)
     {
         set_transport_mode(TRANSPORT_MODE_MULTI);
     }
