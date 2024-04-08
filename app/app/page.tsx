@@ -21,11 +21,17 @@ export default async function Home() {
   }
 
   const avgRttMillis =
-    data.result.reduce((acc, node) => acc + node.avgRttMillis, 0) /
-    data.result.length;
+    data.result
+      .filter(({ packetSuccessRate }) => packetSuccessRate >= 0)
+      .reduce((acc, node) => acc + node.avgRttMillis, 0) /
+      data.result.length -
+    1;
   const avgPacketSuccessRate =
-    data.result.reduce((acc, node) => acc + node.packetSuccessRate * 100, 0) /
-    data.result.length;
+    data.result
+      .filter(({ packetSuccessRate }) => packetSuccessRate >= 0)
+      .reduce((acc, node) => acc + node.packetSuccessRate * 100, 0) /
+      data.result.length -
+    1;
 
   const transport = await getTransportMode();
   if (transport.status != "success") {
