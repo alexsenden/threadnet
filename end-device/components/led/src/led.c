@@ -23,7 +23,7 @@ void set_led_color(int r, int g, int b)
 
 void init_led(void)
 {
-    ESP_LOGI(TAG, "Example configured to blink addressable LED!");
+    ESP_LOGI(TAG, "Configuring LED");
     /* LED strip initialization with the GPIO and pixels number*/
     led_strip_config_t strip_config = {
         .strip_gpio_num = CONFIG_BLINK_GPIO,
