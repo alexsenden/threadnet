@@ -35,6 +35,7 @@
 
 #define TAG "thread_worker"
 
+// Initialize the SPIFFS filesystem required for the ESP-IDF
 static esp_err_t init_spiffs(void)
 {
     esp_vfs_spiffs_conf_t rcp_fw_conf = {
@@ -44,16 +45,23 @@ static esp_err_t init_spiffs(void)
     return ESP_OK;
 }
 
+// Initialize the OpenThread netif
 static esp_netif_t *init_openthread_netif(const esp_openthread_platform_config_t *config)
 {
+    // Use the default OpenThread netif configuration
     esp_netif_config_t cfg = ESP_NETIF_DEFAULT_OPENTHREAD();
+
+    // Create the OpenThread netif
     esp_netif_t *netif = esp_netif_new(&cfg);
+
+    // Check for errors
     assert(netif != NULL);
     ESP_ERROR_CHECK(esp_netif_attach(netif, esp_openthread_netif_glue_init(config)));
 
     return netif;
 }
 
+// Initialize the task that handles the OpenThread stack
 static void ot_task_worker(void *aContext)
 {
     esp_openthread_platform_config_t config = {
@@ -65,6 +73,7 @@ static void ot_task_worker(void *aContext)
     // Initialize the OpenThread stack
     ESP_ERROR_CHECK(esp_openthread_init(&config));
 
+    // Acquire the OpenThread lock
     esp_openthread_lock_acquire(portMAX_DELAY);
 
     // Initialize the esp_netif bindings
@@ -72,29 +81,40 @@ static void ot_task_worker(void *aContext)
     openthread_netif = init_openthread_netif(&config);
     esp_netif_set_default_netif(openthread_netif);
 
+    // Initialize the foreign status sockets
     init_foreign_status_sockets();
+
+    // Initialize the node status messages
     start_node_status_messages();
+
+    // Initialize the network state broadcasts
     start_net_state_broadcasts();
 
     ESP_ERROR_CHECK(esp_openthread_auto_start(NULL));
 
+    // Release the OpenThread lock
     esp_openthread_lock_release();
+
+    // Launch the OpenThread main loop (blocking call)
     esp_openthread_launch_mainloop();
 
     // Clean up
     esp_openthread_netif_glue_deinit();
     esp_netif_destroy(openthread_netif);
-
     esp_vfs_eventfd_unregister();
     vTaskDelete(NULL);
 }
 
+// Start the network thread
 void start_thread_network(void)
 {
+    // Initialize the SPIFFS filesystem
     ESP_ERROR_CHECK(init_spiffs());
 
+    // Initialize the RCP update service
     esp_rcp_update_config_t rcp_update_config = ESP_OPENTHREAD_RCP_UPDATE_CONFIG();
     ESP_ERROR_CHECK(esp_rcp_update_init(&rcp_update_config));
 
+    // Launch the OpenThread task
     xTaskCreate(ot_task_worker, "ot_main_worker", 10240, xTaskGetCurrentTaskHandle(), 5, NULL);
 }

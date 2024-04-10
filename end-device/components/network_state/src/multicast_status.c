@@ -18,17 +18,20 @@ static otUdpSocket node_state_socket;
 
 static char mesh_local_eid[OT_IP6_ADDRESS_STRING_SIZE];
 
+// Receive an ACK packet from the multicast address
 void handle_status_ack_multicast(void *aContext, otMessage *aMessage,
-                      const otMessageInfo *aMessageInfo)
+                                 const otMessageInfo *aMessageInfo)
 {
     // Short circuit if this message is of an inactive type
-    if(get_transport_mode() != TRANSPORT_MODE_MULTI) {
+    if (get_transport_mode() != TRANSPORT_MODE_MULTI)
+    {
         return;
     }
 
     char peerAddr[OT_IP6_ADDRESS_STRING_SIZE];
-    otIp6AddressToString(&aMessageInfo->mPeerAddr, peerAddr, OT_IP6_ADDRESS_STRING_SIZE);    
+    otIp6AddressToString(&aMessageInfo->mPeerAddr, peerAddr, OT_IP6_ADDRESS_STRING_SIZE);
 
+    // Read the data from the message
     size_t dataLength = otMessageGetLength(aMessage);
     uint16_t offset = otMessageGetOffset(aMessage);
     uint8_t data[dataLength];
@@ -36,7 +39,8 @@ void handle_status_ack_multicast(void *aContext, otMessage *aMessage,
 
     ack_packet_t *packet = (ack_packet_t *)data;
 
-    if(!strcmp(packet->ot_mesh_local_eid, mesh_local_eid)){
+    if (!strcmp(packet->ot_mesh_local_eid, mesh_local_eid))
+    {
         ESP_LOGI(TAG, "Received multicast ACK message from %s with seq# %d", peerAddr, packet->sequence_num);
         handle_ack(packet);
     }
@@ -61,6 +65,7 @@ void init_node_status_socket_multicast(otInstance *aInstance)
     const otIp6Address *ot_mesh_local_eid = otThreadGetMeshLocalEid(aInstance);
     otIp6AddressToString(ot_mesh_local_eid, mesh_local_eid, OT_IP6_ADDRESS_STRING_SIZE);
 
+    // Open the UDP socket
     otUdpOpen(aInstance, &ack_socket, handle_status_ack_multicast, aInstance);
     otUdpBind(aInstance, &ack_socket, &listenSockAddr, OT_NETIF_THREAD);
     otUdpBind(aInstance, &node_state_socket, &status_send_sock_addr, OT_NETIF_THREAD);
@@ -78,22 +83,26 @@ void send_status_multicast(otInstance *aInstance, void *buffer, uint32_t size)
 
     memset(&messageInfo, 0, sizeof(messageInfo));
 
+    // Set the destination address
     otIp6AddressFromString(MESH_MULTICAST_ADDR, &destinationAddr);
     messageInfo.mPeerAddr = destinationAddr;
     messageInfo.mPeerPort = MULTICAST_STATUS_PORT;
 
+    // Build the message
     message = otUdpNewMessage(aInstance, NULL);
     otEXPECT_ACTION(message != NULL, error = OT_ERROR_NO_BUFS);
 
     error = otMessageAppend(message, buffer, size);
     otEXPECT(error == OT_ERROR_NONE);
 
+    // Send the message
     ESP_LOGI(TAG, "Sending multicast UDP message to %s port %d", MESH_MULTICAST_ADDR, MULTICAST_STATUS_PORT);
     error = otUdpSend(aInstance, &node_state_socket, message, &messageInfo);
 
 exit:
     if (error != OT_ERROR_NONE && message != NULL)
     {
+        // Cleanup the message
         otMessageFree(message);
     }
 }

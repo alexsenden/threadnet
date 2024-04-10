@@ -8,10 +8,15 @@
 
 static led_strip_handle_t led_strip;
 
+// Set the color of the LED
 void set_led_color(int r, int g, int b)
 {
-    if(r >= 0 && r < 256 && g >= 0 && g < 256 && b >= 0 && b < 256){
+    if (r >= 0 && r < 256 && g >= 0 && g < 256 && b >= 0 && b < 256)
+    {
+        // Update the buffer
         led_strip_set_pixel(led_strip, 0, r, g, b);
+
+        // Refresh the LED strip
         led_strip_refresh(led_strip);
     }
 }

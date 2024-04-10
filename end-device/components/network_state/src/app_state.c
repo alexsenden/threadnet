@@ -17,11 +17,13 @@ static char app_ip[OT_IP6_ADDRESS_STRING_SIZE];
 
 static otUdpSocket app_state_socket;
 
+// Get the transport mode
 transport_mode_t get_transport_mode(void)
 {
     return transport_mode;
 }
 
+// Set the LED color based on the transport mode
 static void set_transport_mode_led(int transport_mode)
 {
     switch (transport_mode)
@@ -41,25 +43,30 @@ static void set_transport_mode_led(int transport_mode)
     }
 }
 
-void set_transport_mode(transport_mode_t new_mode) 
+// Set the transport mode and update the LED color
+void set_transport_mode(transport_mode_t new_mode)
 {
-    if(transport_mode != new_mode) {
+    if (transport_mode != new_mode)
+    {
         transport_mode = new_mode;
         set_transport_mode_led(transport_mode);
         clear_history();
     }
 }
 
+// Simple getter for the app IP address
 void get_app_ip(char *out)
 {
     strcpy(out, app_ip);
 }
 
+// Update the app IP address
 static void update_app_ip(otIp6Address host_addr)
 {
     char host_addr_string[OT_IP6_ADDRESS_STRING_SIZE];
     otIp6AddressToString(&host_addr, host_addr_string, OT_IP6_ADDRESS_STRING_SIZE);
 
+    // Update the app IP address if it has changed
     if (strcmp(app_ip, host_addr_string))
     {
         strcpy(app_ip, host_addr_string);
@@ -67,20 +74,25 @@ static void update_app_ip(otIp6Address host_addr)
     }
 }
 
+// Handle an incoming app state message
 void app_state_message_handler(void *aContext, otMessage *aMessage, const otMessageInfo *aMessageInfo)
 {
+    // Update the app IP address
     update_app_ip(aMessageInfo->mPeerAddr);
 
+    // Read the message
     char message[1024];
     int length = otMessageRead(aMessage, otMessageGetOffset(aMessage), message, sizeof(message) - 1);
     message[length] = '\0';
 
     ESP_LOGI(TAG, "%s", message);
 
+    // Set the transport mode
     transport_mode_t new_transport_mode = message[15] - '0';
     set_transport_mode(new_transport_mode);
 }
 
+// Initialize the app state message handler
 void init_app_state_message_handler(void)
 {
     otSockAddr listenSockAddr;
@@ -92,8 +104,13 @@ void init_app_state_message_handler(void)
     listenSockAddr.mPort = TRANSPORT_MODE_BROADCAST_PORT;
     set_transport_mode(TRANSPORT_MODE_UDP);
 
+    // Acquire OT Lock
     esp_openthread_lock_acquire(portMAX_DELAY);
+
+    // Open the UDP socket
     otUdpOpen(ot_instance, &app_state_socket, app_state_message_handler, ot_instance);
     otUdpBind(ot_instance, &app_state_socket, &listenSockAddr, OT_NETIF_THREAD);
+
+    // Release OT Lock
     esp_openthread_lock_release();
 }
