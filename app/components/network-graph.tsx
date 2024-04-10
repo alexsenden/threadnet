@@ -10,13 +10,24 @@ import { NodeDetailsCard } from "./node-details-card";
 interface INetworkGraphProps {
   data: NodeEntry[];
 }
+
 function NetworkGraph({ data }: INetworkGraphProps) {
+  // Create a reference to the parent div
   const parentDiv = useRef<HTMLDivElement>(null);
+
+  // Create a reference to the force graph
   const fgRef = useRef();
+
+  // Get the width and height of the parent div
   const { width, height } = useDimensions(parentDiv);
+
+  // Create a state variable to store the selected node
   const [selectedNode, setSelectedNode] = React.useState<null | number>(null);
 
+  // Create a deep copy of the nodes
   const nodes = data.map((d) => ({ ...d }));
+
+  // Create a links array from the data
   const links = data.flatMap((node) =>
     node.parent
       ? [
@@ -28,6 +39,7 @@ function NetworkGraph({ data }: INetworkGraphProps) {
       : []
   );
 
+  // Use a callback to handle the click event and prevent unnecessary re-renders
   const handleClick = useCallback(
     (node: any) => {
       // Aim at node from outside it
@@ -44,19 +56,26 @@ function NetworkGraph({ data }: INetworkGraphProps) {
           node,
           3000
         );
+
+        // Set the selected node
         setSelectedNode(node.id);
       }
     },
     [fgRef]
   );
 
+  // Handle the background click event
   const handleBackgroundClick = () => {
+    // Clear the selected node
     setSelectedNode(null);
   };
 
+  // Find the selected node object
   const selectedNodeObj = nodes.find((node) => node.id === selectedNode);
-  if(selectedNode && !selectedNodeObj) {
-    setSelectedNode(null)
+
+  // If the selected node is not found, clear the selected node
+  if (selectedNode && !selectedNodeObj) {
+    setSelectedNode(null);
   }
 
   return (

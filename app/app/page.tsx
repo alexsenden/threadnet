@@ -7,10 +7,12 @@ const NetworkGraph = dynamic(() => import("@/components/network-graph"), {
   ssr: false,
 });
 
+// Export the Home page component
 export default async function Home() {
+  // Fetch data from the Border Router's CSV based endpoint
   const data = await getAgentData();
-  //const data = await getSampleAgentData();
 
+  // If there is an error, display an error message
   if (data.status == "error") {
     return (
       <div>
@@ -20,12 +22,23 @@ export default async function Home() {
     );
   }
 
+  // Fetch the transport mode
+  const transport = await getTransportMode();
+
+  // If there is an error, display an error message
+  if (transport.status != "success") {
+    return <div>Error getting transport status</div>;
+  }
+
+  // Calculate the average RTT, filtering out any nodes with a negative packet success rate (BR)
   const avgRttMillis =
     data.result
       .filter(({ packetSuccessRate }) => packetSuccessRate >= 0)
       .reduce((acc, node) => acc + node.avgRttMillis, 0) /
       data.result.length -
     1;
+
+  // Calculate the average packet success rate, filtering out any nodes with a negative packet success rate (BR)
   const avgPacketSuccessRate =
     data.result
       .filter(({ packetSuccessRate }) => packetSuccessRate >= 0)
@@ -33,18 +46,17 @@ export default async function Home() {
       data.result.length -
     1;
 
-  const transport = await getTransportMode();
-  if (transport.status != "success") {
-    <div>Error getting transport status</div>;
-  }
-
   return (
     <div>
+      {/* Start header */}
       <div className="py-8 px-12 mb-8 border-b flex justify-between items-center select-none">
+        {/* Display name and "logo" */}
         <div className="flex items-center">
           <BiSolidNetworkChart size="1.5rem" />
           <h1 className="font-semibold text-2xl">&nbsp;ThreadNet Explorer</h1>
         </div>
+
+        {/* Display the average RTT and packet success rate */}
         <div className="flex gap-4 items-center">
           <div className="flex gap-2 items-center">
             <p className="font-semibold">Avg RTT:</p>
@@ -61,8 +73,12 @@ export default async function Home() {
           />
         </div>
       </div>
+      {/* End header */}
       <div className="relative min-h-[80vh] h-full w-full">
+        {/* Automatically reload the state on the page client side from upstream server side */}
         <AutoReload />
+
+        {/* Render the network graph */}
         <NetworkGraph data={data.result} />
       </div>
     </div>

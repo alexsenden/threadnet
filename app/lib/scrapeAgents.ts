@@ -44,8 +44,10 @@ type AgentDataResponse =
     };
 
 async function getAgentData(): Promise<AgentDataResponse> {
+  // Fetch the data from the border router without caching
   const result = await fetch(AGENT_HOSTNAME, { cache: "no-cache" });
 
+  // If the status is not 200, return an error
   if (result.status != 200) {
     return {
       status: "error",
@@ -53,10 +55,12 @@ async function getAgentData(): Promise<AgentDataResponse> {
     };
   }
 
+  // Parse the response from the border router
   const body = await result.text();
   const lines = body.trim().split("\n");
   const nodes: NodeEntry[] = [];
 
+  // If there are less than 2 lines, return an empty result
   if (lines.length < 2) {
     return {
       status: "success",
@@ -64,8 +68,10 @@ async function getAgentData(): Promise<AgentDataResponse> {
     };
   }
 
+  // Parse the header columns
   const headerCols = (lines.shift() as string).split(",");
 
+  // DIY CSV parsing
   const idx_index = headerCols.indexOf("index");
   const idx_role = headerCols.indexOf("role");
   const idx_ot_mesh_local_eid = headerCols.indexOf("ot_mesh_local_eid");
@@ -119,6 +125,7 @@ async function getAgentData(): Promise<AgentDataResponse> {
     });
   });
 
+  // Connect implicit relationships between routers and leaders
   nodes.forEach(({ role, partitionId, parent }, index, arr) => {
     if (role == NodeRole.router && !parent) {
       const leader = nodes.find(
@@ -135,6 +142,7 @@ async function getAgentData(): Promise<AgentDataResponse> {
   };
 }
 
+// This function is used to generate sample data for the network graph
 async function getSampleAgentData(): Promise<AgentDataResponse> {
   return {
     status: "success",
@@ -200,17 +208,21 @@ type AgentTransportResponse =
       status: "error";
     };
 
+// Get transport mode from the border router
 async function getTransportMode(): Promise<AgentTransportResponse> {
+  // Fetch the transport mode from the border router without caching
   const result = await fetch(`${AGENT_HOSTNAME}/transport`, {
     cache: "no-cache",
   });
 
+  // If the status is not 200, return an error
   if (result.status != 200) {
     return {
       status: "error",
     };
   }
 
+  // Parse the response from the border router
   switch (await result.text()) {
     case "udp":
       return {
@@ -234,7 +246,9 @@ async function getTransportMode(): Promise<AgentTransportResponse> {
   }
 }
 
+// Set transport mode on the border router
 async function setTransportMode(mode: "UDP" | "TCP" | "MULTI") {
+  // Send a POST request to the border router to set the transport mode
   const result = await fetch(`${AGENT_HOSTNAME}/transport`, {
     method: "POST",
     body: mode,
@@ -243,6 +257,7 @@ async function setTransportMode(mode: "UDP" | "TCP" | "MULTI") {
   console.log(result);
   const response = await result.text();
 
+  // Make sure the response is "OK"
   return response == "OK";
 }
 

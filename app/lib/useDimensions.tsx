@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useState } from "react";
 
+// Simple hook to get the dimensions of a div
 export const useDimensions = (targetRef: React.RefObject<HTMLDivElement>) => {
   const getDimensions = () => {
     return {

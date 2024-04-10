@@ -14,6 +14,7 @@ interface ISettingsMenubarProps {
   transport: "UDP" | "TCP" | "MULTI";
 }
 function SettingsMenubar(props: ISettingsMenubarProps) {
+  // Function to update the server transport mode
   async function updateServer(value: "UDP" | "TCP" | "MULTI") {
     const res = await changeTransport(value);
     console.log(res);
